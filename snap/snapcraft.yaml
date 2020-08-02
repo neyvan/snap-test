@@ -1,35 +1,88 @@
-name: snap-test # you probably want to 'snapcraft register <name>'
-base: core18 # the base snap is the execution environment for this snap
-version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
-summary: It's testing of snap system with qt
+name: neyvan-test
+version: '0.1'
+summary: snap test
 description: |
-    It's very long description...
-    It's very long description...
-    It's very long description...
-    It's very long description...
-grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+  Snap test with qt
+grade: stable  
+confinement: strict
+icon: snap/gui/icon.png
+base: core18
+
+architectures:
+  - build-on: amd64
+    run-on: amd64  
 
 apps:
- qt1:
-  command: desktop-launch $SNAP/opt/myapp/snap-test
-  plugs: [home, unity7, x11]
+  glate:
+    command: desktop-launch neyvan-test
+    environment:
+       DISABLE_WAYLAND: 1
+       QT_QPA_PLATFORMTHEME: gtk3 
+    desktop: usr/share/applications/neyvan-test.desktop
+    plugs:
+        - desktop
+        - desktop-legacy
+        - gsettings
+        - home
+        - opengl
+        - audio-playback
+        - removable-media
+        - unity7
+        - x11
+        - mount-observe
+        - network
+        - network-control
+        - network-observe
+        - network-bind
+        - wayland
+plugs:
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/data-dir/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/data-dir/sounds
+    default-provider: gtk-common-themes
+  qt513:
+    interface: content
+    target: $SNAP/qt513
+    default-provider: qt513
+
 
 parts:
- project-files:
-  plugin: qmake
-  source: .
-  qt-version: qt5
-  project-files: [snap-test.pro]
-  install: |
-   install -d $SNAPCRAFT_PART_INSTALL/opt/myapp
-   install snap-test $SNAPCRAFT_PART_INSTALL/opt/myapp/snap-test
-  after: [integration]
+   gsettings:
+     plugin: nil
+     stage-packages:
+            - libglib2.0-bin
+   application:
+     source-type: git
+     source: https://github.com/neyvan/snap-test.git
+     plugin: qmake
+     qt-version: qt5
+     override-build: |
+            snapcraftctl build
+            sed -i 's|Icon=.*|Icon=${SNAP}/meta/gui/icon.png|g' ${SNAPCRAFT_PART_SRC}/neyvan-test.desktop
+            cp -rf ${SNAPCRAFT_PART_SRC}/neyvan-test.desktop ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/neyvan-test.desktop
+     after: [desktop-qt5]
 
- integration:
-  plugin: nil
-  stage-packages:
-   - libc6
-   - libstdc++6
-   - libc-bin
-  after: [desktop-qt5]
+   snap-launcher:
+     plugin: dump
+     source: snap_launcher/
+   desktop-qt5:
+     plugin: nil
+     build-packages:
+       - build-essential
+       - qtbase5-dev
+       - dpkg-dev
+   cleanup:
+       after: [application]
+       plugin: nil
+       override-prime: |
+          # Remove unneeded stage files to save space
+          cd usr/share
+          rm -rf apport bash-completion bug doc doc-base icons lintian man pam-configs pkgconfig themes upstart zsh

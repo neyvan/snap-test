@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=0.1
+GenericName=NeyvanSnapTest
+Name=NeyvanSnapTest
+Type=Application
+Icon=neyvan-test
+Keywords=neyvan;snap;snap test
+Exec=neyvan-test %F
+Categories=Utility;Qt;
+Terminal=false
+Name[en_US]=NeyvanSnapTest
