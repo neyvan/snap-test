@@ -13,8 +13,8 @@ architectures:
     run-on: amd64  
 
 apps:
-  glate:
-    command: desktop-launch neyvan-test
+  neyvan-test:
+    command: desktop-launch snap-test
     environment:
        DISABLE_WAYLAND: 1
        QT_QPA_PLATFORMTHEME: gtk3 
