@@ -1,41 +1,37 @@
 name: neyvan-test
-version: '0.1'
-summary: snap test
+version: '1.0'
+summary: Bing Wallpaper of the day to Gnome Desktop
 description: |
-  Snap test with qt
-grade: stable  
+  Little powerful utility brings Bing Wallpaper of the day to your desktop with ease of few clicks, Allows download wallpaper with clicks and save them to accessible directory.
+grade: stable
 confinement: strict
 icon: snap/gui/icon.png
 base: core18
 
 architectures:
   - build-on: amd64
-    run-on: amd64  
+    run-on: amd64
 
 apps:
   neyvan-test:
-    command: desktop-launch snap-test
+    command: desktop-launch neyvan-test
+    autostart: neyvan-test.desktop
     environment:
        DISABLE_WAYLAND: 1
-       QT_QPA_PLATFORMTHEME: gtk3 
     desktop: usr/share/applications/neyvan-test.desktop
     plugs:
-        - desktop
-        - desktop-legacy
-        - gsettings
         - home
-        - opengl
-        - audio-playback
-        - removable-media
         - unity7
-        - x11
-        - mount-observe
         - network
-        - network-control
-        - network-observe
-        - network-bind
-        - wayland
+        - opengl
+        - x11
+        - desktop
+        - network-manager
+        - gsettings
+        - desktop-legacy
+
 plugs:
+  gsettings:
   gtk-3-themes:
     interface: content
     target: $SNAP/data-dir/themes
@@ -48,11 +44,10 @@ plugs:
     interface: content
     target: $SNAP/data-dir/sounds
     default-provider: gtk-common-themes
-  qt513:
+  qt551:
     interface: content
-    target: $SNAP/qt513
-    default-provider: qt513
-
+    target: $SNAP/qt551
+    default-provider: qt551
 
 parts:
    gsettings:
